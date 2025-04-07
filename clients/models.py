@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import (
@@ -7,7 +9,10 @@ from django.contrib.auth.models import (
     Group,
     Permission,
 )
+from django.core.exceptions import ValidationError
+from clients.validators import validate_email, validate_password, validate_username
 
+logger = logging.getLogger()
 
 class ClientManager(BaseUserManager):
     def create_superuser(
@@ -17,6 +22,20 @@ class ClientManager(BaseUserManager):
         password:str,
     ) -> "Client":
         """Create super user"""
+        
+        is_username_valid, username_error = validate_username(username)
+        is_email_valid, email_error = validate_email(email)
+        is_password_valid, password_error = validate_password(password)
+
+        if not (is_username_valid and is_email_valid and is_password_valid):
+            if not is_username_valid:
+                logger.error(f"ERROR: {username_error}")
+            if not is_email_valid:
+                logger.error(f"ERROR: {email_error}")
+            if not is_password_valid:
+                logger.error(f"ERROR: {password_error}")
+            raise ValidationError("Validation error")
+
         client: Client = Client()
         client.email=self.normalize_email(email),
         client.username=username
