@@ -7,8 +7,10 @@ from django.contrib.auth.hashers import make_password
 from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
 from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 
 from clients.models import Client
+from clients.validators import validate_username, validate_email, validate_password
 
 logger = logging.getLogger()
 
@@ -30,9 +32,32 @@ class RegistrationView(View):
         username = request.POST.get("username") 
         email = request.POST.get("email")
         raw_password = request.POST.get("password")
-        if len(raw_password) < 8:
-            messages.error(request=request, message="Password is too short")
+
+        is_validated = True
+        validation_errors = ""
+
+        try:
+            validate_username(username)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}; "
+        
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}; "
+
+        try:
+            validate_password(raw_password)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}; "
+
+        if not is_validated:
+            messages.error(request=request, message=f"{validation_errors}")
             return render(request=request, template_name="reg.html")
+        
         password = make_password(password=raw_password)
 
         # client = Client.objects.get(email=email, username=username)
