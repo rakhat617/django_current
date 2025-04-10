@@ -22,19 +22,30 @@ class ClientManager(BaseUserManager):
         password:str,
     ) -> "Client":
         """Create super user"""
-        
-        is_username_valid, username_error = validate_username(username)
-        is_email_valid, email_error = validate_email(email)
-        is_password_valid, password_error = validate_password(password)
 
-        if not (is_username_valid and is_email_valid and is_password_valid):
-            if not is_username_valid:
-                logger.error(f"ERROR: {username_error}")
-            if not is_email_valid:
-                logger.error(f"ERROR: {email_error}")
-            if not is_password_valid:
-                logger.error(f"ERROR: {password_error}")
-            raise ValidationError("Validation error")
+        is_validated = True
+        validation_errors = ""
+
+        try:
+            validate_username(username)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}\n"
+        
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}\n"
+
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            is_validated = False
+            validation_errors += f"{e.message}\n"
+
+        if not is_validated:
+            raise ValidationError(f"\n{validation_errors}")
 
         client: Client = Client()
         client.email=self.normalize_email(email),
