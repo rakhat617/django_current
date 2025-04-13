@@ -21,5 +21,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("clients.urls")),
+    path(route="", view=include("clients.urls")),
+    path(route="posts/", view=include("posts.urls")),
+    path(route="comments/", view=include("comments.urls")), # ДЕЛАЕМ РОУТИНГ ДЛЯ КОММЕНТОВ, 
+    # ХОТЯ НЕ ЗНАЮ ЗАЧЕМ, ИБО КОММЕНТЫ ЖЕ ВМЕСТЕ С ПОСТАМИ ДОЛЖНЫ ОТОБРАЖАТЬСЯ
+    # НО ПО-ДРУГОМУ НЕ ПОНИМАЮ КАК "ЗАРЕГИСТРИРОВАТЬ КОНТРОЛЛЕР"
 ]
