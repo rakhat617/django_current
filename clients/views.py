@@ -2,7 +2,7 @@ import logging
 
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
@@ -86,9 +86,35 @@ class RegistrationView(View):
             messages.error(request=request, message="Oops! Something went wrong")
             return render(request=request, template_name="reg.html")
 
-
+    
 class LoginView(View):
-    """Login controller. Only get and post methods"""
+    """Login Controller."""
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        return render(request=request, template_name='login.html')
+        return render(request=request, template_name="login.html")
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        client: Client | None = authenticate(
+            request=request, 
+            username=username, 
+            password=password,
+        )
+        if not client:
+            messages.error(
+                request=request, 
+                message="Wrong username or password"
+            )
+            return render(request=request, template_name="login.html")
+        login(request=request, user=client)
+        return redirect(to="base")
+
+
+class LogoutView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        is_active = request.user.is_active
+        if not is_active:
+            return HttpResponse("Вы не авторизованы")
+        logout(request=request)
+        return redirect(to="base")
