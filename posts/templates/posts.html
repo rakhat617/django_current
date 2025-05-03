@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Блог группы PyE-242</title>
     <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    <script src="{% static 'js/likes.js' %}"></script>
 </head>
 <body>
     <header>
@@ -46,16 +47,12 @@
                         {% endfor %}
                     </div>
                     <div class="post-reactions">
-                        <!-- НУ В ОБЩЕМ КАК-ТО ТАК. ПРОСТО ОДНА ФОРМА, С ДВУМЯ КНОПКАМИ, КОТОРЫЕ ВНУТРИ СЕБЯ ПЕРЕДАЮТ ЗНАЧЕНИЯ -->
-                        <form action="{% url 'reaction_view' post.pk %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" name="reaction" value="like">
-                                👍 {{ post.likes }}
-                            </button>
-                            <button type="submit" name="reaction" value="dislike">
-                                👎 {{ post.dislikes }}
-                            </button>
-                        </form>
+                        <button id="likebtn" onclick="LikePost('{{post.pk}}')">
+                            👍 {{ post.likes }} 
+                        </button>
+                        <button id="dislikebtn" onclick="DislikePost('{{post.pk}}')">
+                            👎 {{ post.dislikes }}
+                        </button>
                     </div>
                 </div>
             {% empty %}

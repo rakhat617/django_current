@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Блог группы PyE-242</title>
     <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    <script src="{% static 'js/likes.js' %}"></script>
 </head>
 <body>
     <header>
@@ -32,8 +33,12 @@
                         {% endfor %}
                     </div>
                     <div class="post-reactions">
-                        👍 {{ post.likes }} |
-                        👎 {{ post.dislikes }}
+                        <button id="likebtn" onclick="LikePost('{{post.pk}}')">
+                            👍 {{ post.likes }} 
+                        </button>
+                        <button id="dislikebtn" onclick="DislikePost('{{post.pk}}')">
+                            👎 {{ post.dislikes }}
+                        </button>
                     </div>
                     {% if author %}
                     <div>

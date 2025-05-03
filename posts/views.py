@@ -1,7 +1,8 @@
 import logging
+from typing import Literal
 
 from django.views import View
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.utils import IntegrityError
@@ -84,18 +85,18 @@ class ShowDeletePostView(View):
         return redirect(to="base")
 
 class ReactionView(View): # ЭТО ВЬЮШКА ЧИСТО ПОД ЛАЙКИ ДИЗЛАЙКИ. СНАЧАЛА Я ДЕЛАЛ ОТДЕЛЬНЫЕ ВЬЮШКИ И ДЛЯ ЛАЙКОВ И ДЛЯ ДИЗЛАЙКОВ,
-    # ПОТОМУ ЧТО И ДЛЯ КНОПОК ДЕЛАЛ ОТДЕЛЬНЫЕ ФОРМЫ. НО ПОТОМ КАК ДОДУМАЛСЯ ЧТО МОЖНО СДЕЛАТЬ 
-    # В ОДНОЙ ФОРМЕ И ПРОСТО ПЕРЕДАТЬ РАЗНЫЕ ЗНАЧЕНИЯ ЧЕРЕЗ КНОПКИ ЖЕЕЕЕЕСТЬ КАК Я ПОУМНЕЛ ТУПА 5HEAD 
+        # ПОТОМУ ЧТО И ДЛЯ КНОПОК ДЕЛАЛ ОТДЕЛЬНЫЕ ФОРМЫ. НО ПОТОМ КАК ДОДУМАЛСЯ ЧТО МОЖНО СДЕЛАТЬ 
+        # В ОДНОЙ ФОРМЕ И ПРОСТО ПЕРЕДАТЬ РАЗНЫЕ ЗНАЧЕНИЯ ЧЕРЕЗ КНОПКИ ЖЕЕЕЕЕСТЬ КАК Я ПОУМНЕЛ ТУПА 5HEAD 
     def post(self, request: HttpRequest, pk: int) -> HttpResponse: # ПО СУТИ ТУТ НАМ ГЕТ НЕ НУЖЕН, ТОЛЬКО ПОСТ
         user = request.user # СОХРАНЯЕМ ЮЗЕРА В ПЕРЕМЕННУЮ, ПОТОМ НАДО БУДЕТ
         if user.is_active: # ВОТ ЭТА ШТУКА ВАЖНА, ТОЛЬКО В КОНЦЕ ПОНЯЛ, КОГДА СЛУЧАЙНО НЕЗАЛОГИНИВШИСЬ НАЖАЛ НА ЛАЙК. 
-            # КАРОЧ, ЕСЛИ ЮЗЕРА НЕТ АКТИВНОГО, ТОГДА ВООБЩЕ НИЧЕГО НЕ ПРОИСХОДИТ, ПРОСТО СТРАНИЦА ПЕРЕЗАГРУЖАЕТСЯ
+                # КАРОЧ, ЕСЛИ ЮЗЕРА НЕТ АКТИВНОГО, ТОГДА ВООБЩЕ НИЧЕГО НЕ ПРОИСХОДИТ, ПРОСТО СТРАНИЦА ПЕРЕЗАГРУЖАЕТСЯ
             post = Posts.objects.get(pk=pk) # НУ ЭТО КАК И В ПРЕДЫДУЩЕЙ ВЬЮШКЕ, ПРОСТО ПОЛУЧАЕМ ЦЕЛИКОМ ПОСТ ИЗ ДАТАБАЗЫ С КОТОРЫМ РАБОТАЕМ
             reaction = request.POST.get('reaction') # А ВОТ ЭТО УЖЕ МЫ ЗАБИРАЕМ ЗНАЧЕНИЯ КОТОРОЕ ПЕРЕДАЛИ С ПОМОЩЬЮ КНОПКИ, ЧЕРЕЗ ТЕГ БАТТОН В ХТМЛКЕ.
-            # У НАС ВСЕГО ДВЕ КНОПКИ, КОТОРЫЕ ПЕРЕДАЮТ СООТВЕТСТВЕННО 2 ЗНАЧЕНИЯ - СТРОКУ 'LIKE' ИЛИ СТРОКУ 'DISLIKE'
+                # У НАС ВСЕГО ДВЕ КНОПКИ, КОТОРЫЕ ПЕРЕДАЮТ СООТВЕТСТВЕННО 2 ЗНАЧЕНИЯ - СТРОКУ 'LIKE' ИЛИ СТРОКУ 'DISLIKE'
             existing_reaction = Reactions.objects.filter(user=user, post=post).first() # ТУТ МЫ ПРОВЕРЯЕМ СТАВИЛ ЛИ ЭТОТ ЮЗЕР ЭТОМУ ПОСТУ УЖЕ КАКУЮ-ТО РЕАКЦИЮ
-            # П-ДЕТЬ НЕ БУДУ, ПРО ЭТОТ ФИЛЬТЕР МНЕ ГПТ ПОДСКАЗАЛА. 
-            # И ЕЩЕ ПРО ТО ЧТО СОХРАНЯТЬ ЧЕРЕЗ .save() НУЖНО, А ТО ДАТАБАЗА НЕ ОБНОВИТЬСЯ. Я ПОЛЧАСА СИДЕЛ ДУМАЛ ПОЧЕМУ НЕ РАБОТАЕТ
+                # П-ДЕТЬ НЕ БУДУ, ПРО ЭТОТ ФИЛЬТЕР МНЕ ГПТ ПОДСКАЗАЛА. 
+                # И ЕЩЕ ПРО ТО ЧТО СОХРАНЯТЬ ЧЕРЕЗ .save() НУЖНО, А ТО ДАТАБАЗА НЕ ОБНОВИТЬСЯ. Я ПОЛЧАСА СИДЕЛ ДУМАЛ ПОЧЕМУ НЕ РАБОТАЕТ
             if existing_reaction is None: # ЕСЛИ НЕ СТАВИЛ, СРАБАТЫВАЕТ ЭТОТ ИФ
                 if reaction == 'like': # ЕСЛИ ОН НАЖАЛ НА ЛАЙК, ТОГДА ДОБАВЛЯЕМ +1 К ЛАЙКАМ В ТАБЛИЦЕ ПОСТОВ В ДАТАБАЗЕ
                     post.likes += 1
@@ -107,8 +108,8 @@ class ReactionView(View): # ЭТО ВЬЮШКА ЧИСТО ПОД ЛАЙКИ Д�
                     reaction = reaction
                 )
             elif existing_reaction.reaction != reaction: # ЕСЛИ ПЕРВЫЙ ИФ НЕ СРАБОТАЛ, ЗНАЧИТ ЮЗЕР УЖЕ РЕАГИРОВАЛ. ПОСЛЕ ЭТОГО ЧЕКАЕТСЯ ЭТО УСЛОВИЕ
-            # ЭТОТ ИФ СРАБОТАЕТ ЕСЛИ ЮЗЕР НАЖАЛ НА КНОПКУ, КОТОРАЯ НЕ СООТВЕТСТВУЕТ ЕГО ПРЕДЫДУЩЕЙ РЕАКЦИИ, СОХРАНЕННОЙ В ТАБЛИЦЕ. 
-            # НУ И ОЧЕВИДНО ЗАЧЕМ ЭТО НУЖНО: ЧТОБЫ ЮЗЕР МОГ ПОМЕНЯТЬ ЛАЙК НА ДИЗЛАЙК И НАОБОРОТ
+                # ЭТОТ ИФ СРАБОТАЕТ ЕСЛИ ЮЗЕР НАЖАЛ НА КНОПКУ, КОТОРАЯ НЕ СООТВЕТСТВУЕТ ЕГО ПРЕДЫДУЩЕЙ РЕАКЦИИ, СОХРАНЕННОЙ В ТАБЛИЦЕ. 
+                # НУ И ОЧЕВИДНО ЗАЧЕМ ЭТО НУЖНО: ЧТОБЫ ЮЗЕР МОГ ПОМЕНЯТЬ ЛАЙК НА ДИЗЛАЙК И НАОБОРОТ
                 if reaction == 'like': # ТУТ МЕНЯЕТСЯ СЧЕТЧИКИ В ТАБЛИЦЕ ПОСТОВ, В ЗАВИСИМОСТИ ОТ ТОГО ЧТО НА ЧТО МЕНЯЕМ
                     post.likes += 1
                     post.dislikes -= 1
@@ -125,4 +126,46 @@ class ReactionView(View): # ЭТО ВЬЮШКА ЧИСТО ПОД ЛАЙКИ Д�
                 existing_reaction.delete() # УДАЛЯЕМ ЭТУ РЕАКЦИЮ ИЗ ТАБЛИЦЫ
             post.save() # СОХРАНЯЕМ ИЗМЕНЕНИЕ СЧЕТЧИКОВ В ДАТАБАЗУ
         return redirect(to="base") # ВОЗВРАЩАЕМСЯ НА ГЛАВНУЮ СТРАНИЦУ. 
-    # ЕЩЕ КСТАТИ НУЖНО БЫЛО СДЕЛАТЬ ЧТОБЫ СО СТРАНИЦЫ САМОГО ПОСТА МОЖНО БЫЛО ВСЕ ЭТО ДЕЛАТЬ, НО ЧЕТО МНЕ ЛЕНЬ УЖЕ НАД ЭТИМ ПАРИТЬСЯ
+            # ЕЩЕ КСТАТИ НУЖНО БЫЛО СДЕЛАТЬ ЧТОБЫ СО СТРАНИЦЫ САМОГО ПОСТА МОЖНО БЫЛО ВСЕ ЭТО ДЕЛАТЬ, НО ЧЕТО МНЕ ЛЕНЬ УЖЕ НАД ЭТИМ ПАРИТЬСЯ
+
+# Я ПРОСТО СДЕЛАЛ ЗДЕСЬ ВСЕ ТО ЧТО СДЕЛАЛ В СВОЕЙ ИЗНАЧАЛЬНОЙ ВЕРСИИ (ВЬЮШКА СВЕРХУ), НО ОСТАВИЛ СВЯЗЬ С ЖАБА СКРИПТОМ, И ВСЕ ЧИКИ ПУКИ РАБОТАЕТ
+class LikesView(View):
+    def post(self, request: HttpRequest, pk: int, reaction: Literal["like", "dislike"]):
+        user = request.user
+        if not user.is_active:
+            return
+        try:
+            post = Posts.objects.get(pk=pk)
+        except Posts.DoesNotExist:
+            return
+        reaction_count = {}
+        existing_reaction = Reactions.objects.filter(user=user, post=post).first()
+        if existing_reaction is None:
+            if reaction == "like":
+                post.likes += 1
+            elif reaction == "dislike":
+                post.dislikes += 1
+            Reactions.objects.create(
+                user = user,
+                post = post,
+                reaction = reaction
+            )
+        elif existing_reaction.reaction != reaction:
+            if reaction == 'like':
+                    post.likes += 1
+                    post.dislikes -= 1
+            elif reaction == 'dislike':
+                post.dislikes += 1
+                post.likes -= 1
+            existing_reaction.reaction = reaction 
+            existing_reaction.save()      
+        elif existing_reaction.reaction == reaction:
+            if reaction == 'like':
+                post.likes -= 1
+            elif reaction == 'dislike':
+                post.dislikes -= 1
+            existing_reaction.delete()
+        post.save(update_fields=["likes", "dislikes"])
+        reaction_count["likes"] = post.likes
+        reaction_count["dislikes"] = post.dislikes
+        return JsonResponse(data=reaction_count)
