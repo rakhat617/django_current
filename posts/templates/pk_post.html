@@ -33,10 +33,10 @@
                         {% endfor %}
                     </div>
                     <div class="post-reactions">
-                        <button id="likebtn" onclick="LikePost('{{post.pk}}')">
+                        <button id="likebtn{{post.pk}}" onclick="LikePost('{{post.pk}}')">
                             👍 {{ post.likes }} 
                         </button>
-                        <button id="dislikebtn" onclick="DislikePost('{{post.pk}}')">
+                        <button id="dislikebtn{{post.pk}}" onclick="DislikePost('{{post.pk}}')">
                             👎 {{ post.dislikes }}
                         </button>
                     </div>

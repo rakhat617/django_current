@@ -9,8 +9,8 @@ function LikePost(postId){
         },
     }).then(response => response.json())
     .then(data => {
-        document.getElementById("likebtn").innerText = `👍${data.likes}`
-        document.getElementById("dislikebtn").innerText = `👎${data.dislikes}`
+        document.getElementById(`likebtn${postId}`).innerText = `👍${data.likes}`
+        document.getElementById(`dislikebtn${postId}`).innerText = `👎${data.dislikes}`
     })
 }
 
@@ -22,7 +22,7 @@ function DislikePost(postId){
         },
     }).then(response => response.json())
     .then(data => {
-        document.getElementById("likebtn").innerText = `👍${data.likes}`
-        document.getElementById("dislikebtn").innerText = `👎${data.dislikes}`
+        document.getElementById(`likebtn${postId}`).innerText = `👍${data.likes}`
+        document.getElementById(`dislikebtn${postId}`).innerText = `👎${data.dislikes}`
     })
 }
