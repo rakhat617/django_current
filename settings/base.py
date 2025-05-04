@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "clients.apps.ClientsConfig",
     "posts.apps.PostsConfig",
     "comments.apps.CommentsConfig", # ПОДКЛЮЧАЕМ ПРИЛОЖЕНИЕ КОММЕНТС В БЕЙС ПАЙ
+    "accounts.apps.AccountsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

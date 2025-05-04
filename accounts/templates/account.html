@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Account</title>
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+</head>
+<body>
+
+<div class="account-container">
+    <div class="profile-header">
+        <h2>Welcome, {{ user.first_name }} {{ user.last_name }} </h2>
+        <p>Your personal account</p>
+    </div>
+
+    {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+    {% endif %}
+
+    <div class="profile-info">
+        <label>First name:</label>
+        <p> {{ user.first_name }} </p>
+
+        <label>Last name:</label>
+        <p> {{ user.last_name }} </p>
+
+        <label>Email:</label>
+        <p> {{ user.email }}</p>
+
+        <label>Username:</label>
+        <p> {{ user.username }} </p>
+
+        <label>Gender:</label>
+        <p> {{ user.gender }} </p>
+
+        <label>Birthdate:</label>
+        <p> {{ user.birthday }} </p>
+
+        <label>Member since:</label>
+        <p> {{ user.date_created }} </p>
+    </div>
+
+    <div class="actions">
+        <form action="{% url 'edit_profile' %}" method="get">
+            <button>Edit Profile</button>
+        </form>
+        <form action="{% url 'logout' %}" method="get">
+            <button>Logout</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

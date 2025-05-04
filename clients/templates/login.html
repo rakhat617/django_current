@@ -19,7 +19,7 @@
             </div>
         {% endif %}
 
-        <form method="post" action="{% url 'LoginView' %}">
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
             <div class="input-group">
                 <input type="text" name="username" placeholder="Имя пользователя" required autocomplete="off">
@@ -30,7 +30,7 @@
             <button type="submit">Войти</button>
         </form>
 
-        <p>Нет аккаунта? <a href="{% url 'RegistrationView' %}">Зарегистрироваться</a></p>
+        <p>Нет аккаунта? <a href="{% url 'registration' %}">Зарегистрироваться</a></p>
     </div>
 </body>
 </html>

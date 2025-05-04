@@ -6,11 +6,33 @@ body {
 }
 
 header {
+    position: relative;
     background: #007BFF;
     color: white;
-    padding: 20px;
+    padding: 40px 20px;
     text-align: center;
 }
+
+.account-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    color: #007BFF;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.account-button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
 
 .group-name {
     font-weight: bold;
@@ -46,18 +68,22 @@ header {
     border-radius: 6px;
 }
 
-.sidebar button {
+.buttons {
     width: 100%;
-    padding: 8px;
-    background: #007BFF;
     color: white;
-    border: none;
+    background-color: #007BFF;
+    padding: 8px 14px;
     border-radius: 6px;
-    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.sidebar button:hover {
-    background: #0056b3;
+.buttons:hover {
+    background-color: #0056b3;
+    color: white;
 }
 
 .container {
