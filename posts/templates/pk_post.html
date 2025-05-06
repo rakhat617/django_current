@@ -49,6 +49,72 @@
                     </div>
                     {% endif %}
                 </div>
+            <!-- Блок комментариев -->
+                <div class="comments-section">
+                    <h3>Комментарии</h3>
+
+                    {% if post.parent_post.all %}
+                        <div class="comments-list">
+                            {% for comment in post.parent_post.all %}
+                                {% if not comment.parent_comment %}
+                                    <div class="comment">
+                                        <div class="comment-meta">
+                                            {{ comment.user.username|default:"Аноним" }} | {{ comment.date_publication|date:"d.m.Y H:i" }}
+                                        </div>
+                                        <div class="comment-text">
+                                            {{ comment.text }}
+                                        </div>
+                                        <div class="comment-reactions">
+                                            👍 {{ comment.likes }} | 👎 {{ comment.dislikes }}
+                                        </div>
+
+                                        <!-- Ответы -->
+                                        {% if comment.reply_to_comment.all %}
+                                            <div class="comment-replies">
+                                                {% for reply in comment.reply_to_comment.all %}
+                                                    <div class="comment-reply">
+                                                        <div class="comment-meta">
+                                                            {{ reply.user.username|default:"Аноним" }} | {{ reply.date_publication|date:"d.m.Y H:i" }}
+                                                        </div>
+                                                        <div class="comment-text">
+                                                            {{ reply.text }}
+                                                        </div>
+                                                        <div class="comment-reactions">
+                                                            👍 {{ reply.likes }} | 👎 {{ reply.dislikes }}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- Форма ответа -->
+                                        <div class="reply-form">
+                                            <form action="{% url 'add_reply' comment.id %}" method="post">
+                                                {% csrf_token %}
+                                                <textarea name="text" rows="2" placeholder="Ответить на комментарий..." required></textarea>
+                                                <button type="submit">Ответить</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                {% else %}
+                    <p>Пока нет комментариев. Будь первым!</p>
+                {% endif %}
+
+                <!-- Форма нового комментария -->
+
+            </div>
+            <!-- Конец блока комментариев -->
+                <div class="new-comment-form">
+                    <h4>Оставить комментарий</h4>
+                    <form action="{% url 'add_comment' post.id %}" method="post">
+                        {% csrf_token %}
+                        <textarea name="text" rows="4" placeholder="Ваш комментарий..." required></textarea>
+                        <button type="submit">Отправить</button>
+                    </form>
+                </div>
             {% else %}
                 <p>Поста не существует</p>
             {% endif %}

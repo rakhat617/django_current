@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход</title>
+    <title>Сброс пароля</title>
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body>
     <div class="auth-container">
-        <h2>Вход</h2>
+        <h2>Сброс пароля</h2>
 
         {% if messages %}
             <div class="messages">
@@ -19,19 +19,14 @@
             </div>
         {% endif %}
 
-        <form method="post" action="{% url 'login' %}">
+        <form method="post" action="{% url 'reset_password'%}">
             {% csrf_token %}
             <div class="input-group">
                 <input type="text" name="username" placeholder="Имя пользователя" required autocomplete="off">
             </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Пароль" required>
-            </div>
-            <button type="submit">Войти</button>
+            <button type="submit">Сбросить пароль</button>
         </form>
 
-        <p>Забыли пароль? <a href="{% url 'reset_password'%}">Сбросить пароль</a></p>
-        <p>Нет аккаунта? <a href="{% url 'registration' %}">Зарегистрироваться</a></p>
     </div>
 </body>
 </html>

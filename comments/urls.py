@@ -1,12 +1,9 @@
 from django.urls import path
 
-from comments.views import CommentsView
+from comments.views import AddComment, AddReply
 
 
 urlpatterns = [
-    path(route="", view=CommentsView.as_view(), name="comments")
+    path(route="comment/<int:pk>", view=AddComment.as_view(), name="add_comment"),
+    path(route="reply/<int:pk>", view=AddReply.as_view(), name="add_reply")
 ]
-
-# ДЕЛАЕМ РОУТИНГ ДЛЯ КОММЕНТОВ, 
-# ХОТЯ НЕ ЗНАЮ ЗАЧЕМ, ИБО КОММЕНТЫ ЖЕ ВМЕСТЕ С ПОСТАМИ ДОЛЖНЫ ОТОБРАЖАТЬСЯ
-# НО ПО-ДРУГОМУ НЕ ПОНИМАЮ КАК "ЗАРЕГИСТРИРОВАТЬ КОНТРОЛЛЕР"

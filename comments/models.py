@@ -49,3 +49,8 @@ class Comments(models.Model):
         on_delete=models.CASCADE,
         related_name="reply_to_comment",
     )
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = "комментарий"
+        verbose_name_plural = "комментарии"

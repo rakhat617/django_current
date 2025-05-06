@@ -99,7 +99,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
     )
     is_active = models.BooleanField(
         verbose_name="активный",
-        default=True,
+        default=False,
     )
     is_staff = models.BooleanField(
         verbose_name="сотрудник",
@@ -118,6 +118,12 @@ class Client(AbstractBaseUser, PermissionsMixin):
     date_created = models.DateTimeField(
         verbose_name="дата создания",
         default=timezone.now,
+    )
+    activation_code = models.CharField(
+        verbose_name="код активации",
+        max_length=100,
+        blank=True,
+        null=True,
     )
     
     REQUIRED_FIELDS = ["email"]
